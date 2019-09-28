@@ -141,6 +141,7 @@
             this.deleteButton.TabIndex = 22;
             this.deleteButton.Text = "Delete";
             this.deleteButton.UseVisualStyleBackColor = true;
+            this.deleteButton.Click += new System.EventHandler(this.deleteButton_Click);
             // 
             // updateButton
             // 
@@ -150,6 +151,7 @@
             this.updateButton.TabIndex = 23;
             this.updateButton.Text = "Update";
             this.updateButton.UseVisualStyleBackColor = true;
+            this.updateButton.Click += new System.EventHandler(this.updateButton_Click);
             // 
             // serachButton
             // 
@@ -159,6 +161,7 @@
             this.serachButton.TabIndex = 24;
             this.serachButton.Text = "Search";
             this.serachButton.UseVisualStyleBackColor = true;
+            this.serachButton.Click += new System.EventHandler(this.serachButton_Click);
             // 
             // showDataGridView
             // 

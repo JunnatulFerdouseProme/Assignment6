@@ -26,7 +26,7 @@ namespace Assignment6
 
             //Sql Command
             //INSERT INTO Customer(Name, Contact,Address) Values ('Prome','01724127760','Narrinda Police Fari')
-            string commandString = @"INSERT INTO Orders (CustomerName, ItemName,Price,Quantity) Values ('" + customerNameTextBox.Text + "','" + itemNameTextBox.Text + "','" + priceTextBox.Text + "','" + quantityTextBox.Text + "')";
+            string commandString = @"INSERT INTO Orders (CustomerName, ItemName,Price,Quantity) Values ('" + customerNameTextBox.Text + "','" + itemNameTextBox.Text + "'," + priceTextBox.Text + "," + quantityTextBox.Text + ")";
             SqlCommand sqlCommand = new SqlCommand(commandString, sqlConnection);
 
             //Clear
@@ -65,7 +65,129 @@ namespace Assignment6
 
         private void showButton_Click(object sender, EventArgs e)
         {
+            //Connection
+            string Connectionstring = @"Server=DESKTOP-IL4U8GL; Database=CoffeeShop; Integrated Security=True";
+            SqlConnection sqlConnection = new SqlConnection(Connectionstring);
 
+            //Sql Command
+            //SELECT * FROM Customer
+            string commandString = @"SELECT * FROM Orders";
+            SqlCommand sqlCommand = new SqlCommand(commandString, sqlConnection);
+
+            //Open Connection
+            sqlConnection.Open();
+
+            //Execute
+            SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(sqlCommand);
+            DataTable dataTable = new DataTable();
+            sqlDataAdapter.Fill(dataTable);
+            if (dataTable.Rows.Count > 0)
+            {
+                showDataGridView.DataSource = dataTable;
+            }
+            else
+            {
+                showDataGridView.DataSource = null;
+                MessageBox.Show("Data not found!");
+
+            }
+
+            //Close Connection
+            sqlConnection.Close();
+        }
+
+        private void deleteButton_Click(object sender, EventArgs e)
+        {
+            //Connection
+            string Connectionstring = @"Server=DESKTOP-IL4U8GL; Database=CoffeeShop; Integrated Security=True";
+            SqlConnection sqlConnection = new SqlConnection(Connectionstring);
+
+            //Sql Command
+            //DELETE FROM Customer WHERE ID = 3
+            string commandString = @"DELETE FROM Orders WHERE ID = " + idTextBox.Text + "";
+            SqlCommand sqlCommand = new SqlCommand(commandString, sqlConnection);
+
+            //Open Connection
+            sqlConnection.Open();
+            //Execute
+            int isExecuted = sqlCommand.ExecuteNonQuery();
+            if (isExecuted > 0)
+            {
+                MessageBox.Show("Deleted");
+            }
+            else
+            {
+                MessageBox.Show("Not Deleted");
+            }
+
+            //Close Connection
+            sqlConnection.Close();
+        }
+
+        private void updateButton_Click(object sender, EventArgs e)
+        {
+            //Connection
+            string Connectionstring = @"Server=DESKTOP-IL4U8GL; Database=CoffeeShop; Integrated Security=True";
+            SqlConnection sqlConnection = new SqlConnection(Connectionstring);
+
+            //Sql Command
+            //Update Customer 
+            string commandString = @"UPDATE Customer SET CustomerName = '" + customerNameTextBox.Text + "', ItemName = '" + itemNameTextBox.Text + "',Price = " + priceTextBox.Text + ",Price = " + quantityTextBox.Text + "" +
+                    "WHERE ID = " + idTextBox.Text + "";
+            SqlCommand sqlCommand = new SqlCommand(commandString, sqlConnection);
+
+            customerNameTextBox.Clear();
+            itemNameTextBox.Clear();
+            priceTextBox.Clear();
+            quantityTextBox.Clear();
+            //Open Connection
+            sqlConnection.Open();
+            //Execute
+            int isExecuted = sqlCommand.ExecuteNonQuery();
+            if (isExecuted > 0)
+            {
+                MessageBox.Show("Updated");
+            }
+            else
+            {
+                MessageBox.Show("Not Update");
+            }
+
+            //Close Connection
+            sqlConnection.Close();
+        }
+
+        private void serachButton_Click(object sender, EventArgs e)
+        {
+            //Connection
+            string Connectionstring = @"Server=DESKTOP-IL4U8GL; Database=CoffeeShop; Integrated Security=True";
+            SqlConnection sqlConnection = new SqlConnection(Connectionstring);
+
+            //Sql Command
+            //Search into Customer
+            string commandString = @"SELECT * FROM Orders WHERE Id =" + idTextBox.Text + " ";
+            SqlCommand sqlCommand = new SqlCommand(commandString, sqlConnection);
+
+            //Open Connection
+            sqlConnection.Open();
+            //Execute
+            SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(sqlCommand);
+            DataTable dataTable = new DataTable();
+            sqlDataAdapter.Fill(dataTable);
+            if (dataTable.Rows.Count > 0)
+            {
+                showDataGridView.DataSource = dataTable;
+            }
+            else
+            {
+                showDataGridView.DataSource = null;
+                MessageBox.Show("Data not found!");
+
+            }
+
+
+            //Close Connection
+            sqlConnection.Close();
         }
     }
 }
