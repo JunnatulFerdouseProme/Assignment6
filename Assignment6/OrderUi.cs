@@ -132,7 +132,7 @@ namespace Assignment6
 
             //Sql Command
             //Update Customer 
-            string commandString = @"UPDATE Customer SET CustomerName = '" + customerNameTextBox.Text + "', ItemName = '" + itemNameTextBox.Text + "',Price = " + priceTextBox.Text + ",Price = " + quantityTextBox.Text + "" +
+            string commandString = @"UPDATE Orders SET CustomerName = '" + customerNameTextBox.Text + "', ItemName = '" + itemNameTextBox.Text + "',Price = " + priceTextBox.Text + ",Quantity = " + quantityTextBox.Text + "" +
                     "WHERE ID = " + idTextBox.Text + "";
             SqlCommand sqlCommand = new SqlCommand(commandString, sqlConnection);
 

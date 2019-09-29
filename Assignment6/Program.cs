@@ -16,7 +16,9 @@ namespace Assignment6
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new CustomerUi());
             Application.Run(new ItemUi());
+            Application.Run(new OrderUi());
         }
     }
 }
