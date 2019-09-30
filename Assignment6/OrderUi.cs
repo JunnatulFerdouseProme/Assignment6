@@ -7,12 +7,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
+using Assignment6.BLL;
 using System.Windows.Forms;
 
 namespace Assignment6
 {
     public partial class OrderUi : Form
     {
+        OrderManager _orderManager = new OrderManager();
         public OrderUi()
         {
             InitializeComponent();
@@ -20,25 +22,32 @@ namespace Assignment6
 
         private void addButton_Click(object sender, EventArgs e)
         {
-            //Connection
-            string Connectionstring = @"Server=DESKTOP-IL4U8GL; Database=CoffeeShop; Integrated Security=True";
-            SqlConnection sqlConnection = new SqlConnection(Connectionstring);
+            //Mandatory
+            if (String.IsNullOrEmpty(customerNameTextBox.Text))
+            {
+                MessageBox.Show("Customer Name can not be Empty!!");
+                return;
+            }
+            if (String.IsNullOrEmpty(itemNameTextBox.Text))
+            {
+                MessageBox.Show("Item can not be Empty!!");
+                return;
+            }
+            if (String.IsNullOrEmpty(priceTextBox.Text))
+            {
+                MessageBox.Show("Price can not be Empty!!");
+                return;
+            }
 
-            //Sql Command
-            //INSERT INTO Customer(Name, Contact,Address) Values ('Prome','01724127760','Narrinda Police Fari')
-            string commandString = @"INSERT INTO Orders (CustomerName, ItemName,Price,Quantity) Values ('" + customerNameTextBox.Text + "','" + itemNameTextBox.Text + "'," + priceTextBox.Text + "," + quantityTextBox.Text + ")";
-            SqlCommand sqlCommand = new SqlCommand(commandString, sqlConnection);
+            ////Unique
+            //if (_itemManager.IsNameExist(nameTextBox.Text))
+            //{
+            //    MessageBox.Show(nameTextBox.Text + " Already Exist!!");
+            //    return;
+            //}
 
-            //Clear
-            customerNameTextBox.Clear();
-            itemNameTextBox.Clear();
-            priceTextBox.Clear();
-            quantityTextBox.Clear();
-            //Open Connection
-            sqlConnection.Open();
-            //Execute
-            int isExecuted = sqlCommand.ExecuteNonQuery();
-            if (isExecuted > 0)
+            //Add/Insert
+            if (_orderManager.Add(customerNameTextBox.Text,itemNameTextBox.Text, Convert.ToDouble(priceTextBox.Text),Convert.ToDouble(quantityTextBox.Text)))
             {
                 MessageBox.Show("Saved");
             }
@@ -46,10 +55,11 @@ namespace Assignment6
             {
                 MessageBox.Show("Not Saved");
             }
-
-
-            //Close Connection
-            sqlConnection.Close();
+            idTextBox.Clear();
+            customerNameTextBox.Clear();
+            itemNameTextBox.Clear();
+            priceTextBox.Clear();
+            quantityTextBox.Clear();
 
         }
 
@@ -65,53 +75,20 @@ namespace Assignment6
 
         private void showButton_Click(object sender, EventArgs e)
         {
-            //Connection
-            string Connectionstring = @"Server=DESKTOP-IL4U8GL; Database=CoffeeShop; Integrated Security=True";
-            SqlConnection sqlConnection = new SqlConnection(Connectionstring);
-
-            //Sql Command
-            //SELECT * FROM Customer
-            string commandString = @"SELECT * FROM Orders";
-            SqlCommand sqlCommand = new SqlCommand(commandString, sqlConnection);
-
-            //Open Connection
-            sqlConnection.Open();
-
-            //Execute
-            SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(sqlCommand);
-            DataTable dataTable = new DataTable();
-            sqlDataAdapter.Fill(dataTable);
-            if (dataTable.Rows.Count > 0)
-            {
-                showDataGridView.DataSource = dataTable;
-            }
-            else
-            {
-                showDataGridView.DataSource = null;
-                MessageBox.Show("Data not found!");
-
-            }
-
-            //Close Connection
-            sqlConnection.Close();
+            showDataGridView.DataSource = _orderManager.Display();
         }
 
         private void deleteButton_Click(object sender, EventArgs e)
         {
-            //Connection
-            string Connectionstring = @"Server=DESKTOP-IL4U8GL; Database=CoffeeShop; Integrated Security=True";
-            SqlConnection sqlConnection = new SqlConnection(Connectionstring);
+            //Set Id as Mandatory
+            if (String.IsNullOrEmpty(idTextBox.Text))
+            {
+                MessageBox.Show("Id Can not be Empty!!!");
+                return;
+            }
 
-            //Sql Command
-            //DELETE FROM Customer WHERE ID = 3
-            string commandString = @"DELETE FROM Orders WHERE ID = " + idTextBox.Text + "";
-            SqlCommand sqlCommand = new SqlCommand(commandString, sqlConnection);
-
-            //Open Connection
-            sqlConnection.Open();
-            //Execute
-            int isExecuted = sqlCommand.ExecuteNonQuery();
-            if (isExecuted > 0)
+            //Delete
+            if (_orderManager.Delete(Convert.ToInt32(idTextBox.Text)))
             {
                 MessageBox.Show("Deleted");
             }
@@ -120,74 +97,66 @@ namespace Assignment6
                 MessageBox.Show("Not Deleted");
             }
 
-            //Close Connection
-            sqlConnection.Close();
-        }
-
-        private void updateButton_Click(object sender, EventArgs e)
-        {
-            //Connection
-            string Connectionstring = @"Server=DESKTOP-IL4U8GL; Database=CoffeeShop; Integrated Security=True";
-            SqlConnection sqlConnection = new SqlConnection(Connectionstring);
-
-            //Sql Command
-            //Update Customer 
-            string commandString = @"UPDATE Orders SET CustomerName = '" + customerNameTextBox.Text + "', ItemName = '" + itemNameTextBox.Text + "',Price = " + priceTextBox.Text + ",Quantity = " + quantityTextBox.Text + "" +
-                    "WHERE ID = " + idTextBox.Text + "";
-            SqlCommand sqlCommand = new SqlCommand(commandString, sqlConnection);
-
+            showDataGridView.DataSource = _orderManager.Display();
+            idTextBox.Clear();
             customerNameTextBox.Clear();
             itemNameTextBox.Clear();
             priceTextBox.Clear();
             quantityTextBox.Clear();
-            //Open Connection
-            sqlConnection.Open();
-            //Execute
-            int isExecuted = sqlCommand.ExecuteNonQuery();
-            if (isExecuted > 0)
+        }
+
+        private void updateButton_Click(object sender, EventArgs e)
+        {
+
+            //Set Id as Mandatory
+            if (String.IsNullOrEmpty(idTextBox.Text))
+            {
+                MessageBox.Show("Id Can not be Empty!!!");
+                return;
+            }
+            if (String.IsNullOrEmpty(customerNameTextBox.Text))
+            {
+                MessageBox.Show("CustomerName Can not be Empty!!!");
+                return;
+            }
+            if (String.IsNullOrEmpty(itemNameTextBox.Text))
+            {
+                MessageBox.Show("ItemName Can not be Empty!!!");
+                return;
+            }
+            //Set Price as Mandatory
+            if (String.IsNullOrEmpty(priceTextBox.Text))
+            {
+                MessageBox.Show("Price Can not be Empty!!!");
+                return;
+            }
+            if (String.IsNullOrEmpty(quantityTextBox.Text))
+            {
+                MessageBox.Show("Quantity Can not be Empty!!!");
+                return;
+            }
+
+            if (_orderManager.Update(customerNameTextBox.Text,itemNameTextBox.Text, Convert.ToDouble(priceTextBox.Text),Convert.ToDouble(quantityTextBox.Text) ,Convert.ToInt32(idTextBox.Text)))
             {
                 MessageBox.Show("Updated");
+                showDataGridView.DataSource = _orderManager.Display();
             }
             else
             {
-                MessageBox.Show("Not Update");
+                MessageBox.Show("Not Updated");
             }
+            idTextBox.Clear();
+            customerNameTextBox.Clear();
+            itemNameTextBox.Clear();
+            priceTextBox.Clear();
+            quantityTextBox.Clear();
 
-            //Close Connection
-            sqlConnection.Close();
         }
 
         private void serachButton_Click(object sender, EventArgs e)
         {
-            //Connection
-            string Connectionstring = @"Server=DESKTOP-IL4U8GL; Database=CoffeeShop; Integrated Security=True";
-            SqlConnection sqlConnection = new SqlConnection(Connectionstring);
-
-            //Sql Command
-            //Search into Customer
-            string commandString = @"SELECT * FROM Orders WHERE Id =" + idTextBox.Text + " ";
-            SqlCommand sqlCommand = new SqlCommand(commandString, sqlConnection);
-
-            //Open Connection
-            sqlConnection.Open();
-            //Execute
-            SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(sqlCommand);
-            DataTable dataTable = new DataTable();
-            sqlDataAdapter.Fill(dataTable);
-            if (dataTable.Rows.Count > 0)
-            {
-                showDataGridView.DataSource = dataTable;
-            }
-            else
-            {
-                showDataGridView.DataSource = null;
-                MessageBox.Show("Data not found!");
-
-            }
-
-
-            //Close Connection
-            sqlConnection.Close();
+            showDataGridView.DataSource = _orderManager.Search(itemNameTextBox.Text);
+            itemNameTextBox.Clear();
         }
     }
 }
